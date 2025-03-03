@@ -11,7 +11,7 @@ export default function PaymentPage() {
       const { link } = await createPayment(plan);
       window.location.href = link; // ✅ Redirect to PayPal
     } catch (error) {
-      console.error("🚨 Payment Error:", error);
+      //console.error("🚨 Payment Error:", error);
       toast.error(error.response?.data?.message || "Payment failed!");
     } finally {
       setLoading(false);

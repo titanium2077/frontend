@@ -37,10 +37,10 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
         toast.success("✅ Admin download started!", { autoClose: 3000 });
       }
     } catch (error) {
-      console.error(
-        "🚨 Download Error:",
-        error.response?.data || error.message
-      );
+      // console.error(
+      //   "🚨 Download Error:",
+      //   error.response?.data || error.message
+      // );
       toast.error(
         `⚠️ ${
           error.response?.data?.message || "Failed to generate download link"

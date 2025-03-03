@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       const response = await getAuthenticatedUser();
       setUser(response.user);
     } catch (error) {
-      console.error("User authentication failed", error);
+      //console.error("User authentication failed", error);
       setUser(null);
     } finally {
       setLoading(false); // ✅ Ensure loading state is updated

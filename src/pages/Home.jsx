@@ -30,7 +30,7 @@ export default function Home() {
       setItems(data.items || []);
       setTotalPages(data.totalPages || 1);
     } catch (error) {
-      console.error("🚨 Error fetching feed items:", error);
+      //console.error("🚨 Error fetching feed items:", error);
       toast.error("⚠️ Error loading feed items. Please try again.", {
         autoClose: 4000,
       });

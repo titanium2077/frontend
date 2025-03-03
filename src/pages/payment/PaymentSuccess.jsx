@@ -25,7 +25,7 @@ export default function PaymentSuccess() {
       toast.success("Payment successful! ✅ Storage increased 🎉");
       navigate("/profile");
     } catch (error) {
-      console.error("🚨 Payment Verification Error:", error);
+      //console.error("🚨 Payment Verification Error:", error);
       toast.error(error.response?.data?.message || "Payment verification failed ❌");
       navigate("/payment");
     }

@@ -29,7 +29,7 @@ export const AdminAuthProvider = ({ children }) => {
         logout();
       }
     } catch (error) {
-      console.error("Admin authentication failed");
+      //console.error("Admin authentication failed");
       setAdmin(null);
       
       // ✅ Clear cookies when session expires

@@ -20,7 +20,7 @@ export default function FeedTable({
         fetchFeedItems(); // ✅ Refresh List
         toast.success("✅ Item deleted successfully!", { autoClose: 3000 });
       } catch (error) {
-        console.error("🚨 Error deleting feed item", error);
+        //console.error("🚨 Error deleting feed item", error);
         toast.error("❌ Failed to delete item. Please try again.", {
           autoClose: 3000,
         });

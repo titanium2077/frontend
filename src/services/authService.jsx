@@ -14,7 +14,7 @@ const handleRequest = async (request) => {
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Network error";
-    console.error("API Error:", errorMessage);
+    //console.error("API Error:", errorMessage);
     throw new Error(errorMessage);
   }
 };

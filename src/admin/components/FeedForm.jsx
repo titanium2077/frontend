@@ -44,14 +44,14 @@ export default function FeedForm({
     const selectedFile = e.target.files[0];
 
     if (!selectedFile) {
-      console.error("🚨 No file selected!");
+      //console.error("🚨 No file selected!");
       alert("Please select a ZIP file before submitting.");
       return;
     }
 
-    console.log("📂 Selected File:", selectedFile);
-    console.log("🔍 File Type:", selectedFile.type);
-    console.log("📝 File Name:", selectedFile.name);
+    //console.log("📂 Selected File:", selectedFile);
+    //console.log("🔍 File Type:", selectedFile.type);
+    //console.log("📝 File Name:", selectedFile.name);
 
     // ✅ Ensure it is a ZIP file
     const allowedZipTypes = [
@@ -64,10 +64,10 @@ export default function FeedForm({
       !allowedZipTypes.includes(selectedFile.type) &&
       !selectedFile.name.endsWith(".zip")
     ) {
-      console.error(
-        "🚨 Invalid file type! Expected ZIP, got:",
-        selectedFile.type
-      );
+      //console.error(
+      //   "🚨 Invalid file type! Expected ZIP, got:",
+      //   selectedFile.type
+      // );
       alert("Only ZIP files are allowed!");
       return;
     }
@@ -122,9 +122,9 @@ export default function FeedForm({
         formDataToSend.append("image", previewImage);
       }
 
-      console.log("📂 FormData to be sent:");
+      //console.log("📂 FormData to be sent:");
       for (const [key, value] of formDataToSend.entries()) {
-        console.log(`${key}:`, value);
+        //console.log(`${key}:`, value);
       }
 
       const apiUrl = selectedItem
@@ -140,7 +140,7 @@ export default function FeedForm({
       fetchFeedItems();
       setIsFormOpen(false);
     } catch (error) {
-      console.error("🚨 Error saving feed item:", error);
+      //console.error("🚨 Error saving feed item:", error);
     }
   };
 

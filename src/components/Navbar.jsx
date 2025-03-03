@@ -17,7 +17,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         {/* ✅ App Title */}
         <a href="/">
-          <h1 className="text-xl font-bold">Miamiachan</h1>
+          <h1 className="text-xl font-bold">Kawaiee</h1>
         </a>
 
         {/* ✅ User Actions */}

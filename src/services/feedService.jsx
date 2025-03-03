@@ -7,7 +7,7 @@ export const getFeedItems = async (page = 1, limit = 10) => {
     const response = await axios.get(`${FEED_URL}?page=${page}&limit=${limit}`);
     return response.data; // Returns { items, totalPages, currentPage }
   } catch (error) {
-    console.error("Error fetching feed data:", error);
+    //console.error("Error fetching feed data:", error);
     return { items: [], totalPages: 1, currentPage: 1 };
   }
 };

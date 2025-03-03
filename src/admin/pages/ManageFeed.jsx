@@ -24,7 +24,7 @@ export default function ManageFeed() {
       setFeedItems(response.data.items);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error("Error fetching feed items", error);
+      //console.error("Error fetching feed items", error);
     } finally {
       setLoading(false);
     }

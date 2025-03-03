@@ -28,7 +28,7 @@ export default function FileUpload({ onUploadSuccess }) {
       onUploadSuccess();
     } catch (error) {
       alert("Upload failed!");
-      console.error(error);
+      //console.error(error);
     } finally {
       setUploading(false);
     }

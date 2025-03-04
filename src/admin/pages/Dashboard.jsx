@@ -18,20 +18,17 @@ export default function Dashboard() {
 
   const fetchDashboardStats = async () => {
     try {
-      const response = await axios.get(`${ADMIN_DASHBOARD}`, {
-        withCredentials: true, // ✅ Send cookies
+      const response = await axios.get(ADMIN_DASHBOARD, {
+        withCredentials: true, 
         headers: {
           "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest", 
         },
       });
   
-      if (!response.data) {
-        throw new Error("Failed to fetch dashboard stats");
-      }
-  
       setStats(response.data);
     } catch (error) {
-      console.error("🚨 Error fetching dashboard stats:", error.message);
+      console.error("🚨 Error fetching dashboard stats:", error.response?.data || error);
     }
   };  
 

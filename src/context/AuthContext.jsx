@@ -16,19 +16,14 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const token = Cookies.get("jwt");
-      if (!token) {
-        console.warn("🚨 No JWT token found.");
-        setUser(null);
-        return;
-      }
+      console.log("🔄 Fetching user...");
+      console.log("🔹 Current Cookies:", document.cookie);
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
-        credentials: "include", // ✅ Ensures cookies are sent
+        credentials: "include", // ✅ Send cookies with request
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -37,6 +32,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
+      console.log("✅ User fetched:", data.user);
       setUser(data.user);
     } catch (error) {
       console.warn("🚨 User authentication failed", error.message);
@@ -48,6 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData, navigate) => {
     try {
+      console.log("🔄 Logging in user...");
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         credentials: "include", // ✅ Send cookies with request
@@ -63,8 +60,14 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
 
-      // ✅ Store JWT in cookies
-      Cookies.set("jwt", data.token, { secure: true, sameSite: "Strict" });
+      // ✅ Store JWT in cookies (with Lax mode for subdomains)
+      Cookies.set("jwt", data.token, {
+        secure: window.location.protocol === "https:", // ✅ Secure only if HTTPS
+        sameSite: "Lax", // ✅ Works across subdomains
+        path: "/", // ✅ Ensures cookie works site-wide
+      });
+
+      console.log("✅ JWT Token Stored:", Cookies.get("jwt"));
 
       setUser(data.user);
       toast.success("Login successful! 🎉");
@@ -76,6 +79,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async (navigate) => {
     try {
+      console.log("🔄 Logging out...");
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include", // ✅ Ensure cookies are cleared on logout

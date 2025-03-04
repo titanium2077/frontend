@@ -45,8 +45,16 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login({ email, password });
-  };
+    
+    // ✅ Generate or retrieve a device token
+    let deviceToken = localStorage.getItem("deviceToken");
+    if (!deviceToken) {
+      deviceToken = crypto.randomUUID();
+      localStorage.setItem("deviceToken", deviceToken);
+    }
+  
+    await login({ email, password, deviceToken });
+  };  
 
   // 🔒 Show "No Permission" Page if Access is Denied
   if (denied) {

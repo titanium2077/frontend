@@ -4,7 +4,7 @@ import {
   AUTH_URL_USER_LOGIN,
   AUTH_URL_USER_LOGOUT,
   AUTH_URL_USER_REGISTER,
-  AUTH_URL__USER_PROFILE,
+  AUTH_URL_USER_PROFILE,
 } from "../config/apiConfig";
 
 // ✅ Handle API Errors (Better error messages)
@@ -50,6 +50,6 @@ export const logoutUser = async () => {
 // ✅ Get Authenticated User (Handles both User & Admin)
 export const getAuthenticatedUser = async () => {
   return handleRequest(
-    axios.get(`${AUTH_URL__USER_PROFILE}`, { withCredentials: true })
+    axios.get(`${AUTH_URL_USER_PROFILE}`, { withCredentials: true })
   );
 };

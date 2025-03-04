@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { loginAdmin, logoutUser, getAuthenticatedUser } from "../../services/authService";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie"; // ✅ Import js-cookie
+import Cookies from "js-cookie"; 
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const AdminAuthContext = createContext();
 
@@ -19,54 +20,82 @@ export const AdminAuthProvider = ({ children }) => {
 
   const fetchAdmin = async () => {
     try {
-      const response = await getAuthenticatedUser();
+      const token = Cookies.get("jwt");
+      if (!token) {
+        console.warn("🚨 No JWT token found.");
+        logout();
+        return;
+      }
 
-      // ✅ Ensure only admins can access
-      if (response.user.role === "admin") {
-        setAdmin(response.user);
+      const response = await fetch(`${API_URL}/auth/me`, {
+        method: "GET",
+        credentials: "include", 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Authentication failed");
+      }
+
+      const data = await response.json();
+
+      if (data.user.role === "admin") {
+        setAdmin(data.user);
       } else {
         toast.error("Access Denied! Admins only.");
         logout();
       }
     } catch (error) {
-      //console.error("Admin authentication failed");
-      setAdmin(null);
-      
-      // ✅ Clear cookies when session expires
-      Cookies.remove("jwt");
-      Cookies.remove("deviceToken");
-      
-      toast.warning("Session expired! Please log in again.");
-      navigate("/admin/login"); // ✅ Secure redirect
+      console.warn("🚨 Admin authentication failed:", error.message);
+      logout();
     }
   };
 
   const login = async (adminData) => {
     try {
-      const response = await loginAdmin(adminData);
-      
+      const response = await fetch(`${API_URL}/auth/admin/login`, {
+        method: "POST",
+        credentials: "include", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(adminData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Admin login failed");
+      }
+
+      const data = await response.json();
+
       // ✅ Prevent normal users from logging into the admin panel
-      if (response.user.role !== "admin") {
+      if (data.user.role !== "admin") {
         toast.error("Access Denied! This login is for admins only. ❌");
         return;
       }
 
-      setAdmin(response.user);
+
+      Cookies.set("jwt", data.token, { secure: true, sameSite: "Strict" });
+
+      setAdmin(data.user);
       toast.success("Admin login successful! 🎉");
-      navigate("/admin/dashboard"); // ✅ Redirect on success
+      navigate("/admin/dashboard");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Admin login failed! ❌");
+      toast.error("Admin login failed! ❌");
     }
   };
 
   const logout = () => {
-    logoutUser();
+    fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include", 
+    });
+
     setAdmin(null);
-
-    // ✅ Remove authentication cookies
     Cookies.remove("jwt");
-    Cookies.remove("deviceToken");
-
     toast.info("Admin logged out successfully!");
     navigate("/admin/login");
   };

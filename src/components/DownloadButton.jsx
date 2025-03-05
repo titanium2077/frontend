@@ -9,58 +9,44 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
 
   const handleDownload = async () => {
     if (!fileId) return toast.error("⚠️ Invalid file ID!");
-
+  
     setIsDownloading(true);
     toast.info("📥 Generating secure download link...", { autoClose: 2000 });
-
+  
     try {
-      // ✅ STEP 1: Request Secure Download Token
+      // ✅ Step 1: Generate Secure Token
       const response = await axios.get(`${FEED_URL_DOWNLOAD}/${fileId}`, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
-
-      const { downloadToken, secureDownloadUrl, remainingQuota } = response.data;
-      if (!downloadToken) throw new Error("Download token not provided by the server.");
-
+  
+      const { downloadToken, secureDownloadUrl } = response.data;
+  
+      if (!downloadToken) throw new Error("Download token missing!");
+  
       console.log("✅ Secure Token Received:", downloadToken);
-
-      // ✅ STEP 2: Verify Secure Token
-      const verifyResponse = await axios.get(secureDownloadUrl);
-      const { fileName, fileSize, downloadUrl } = verifyResponse.data;
-
-      console.log("✅ Token Verified. File:", fileName, "Size:", fileSize);
-
-      // ✅ Confirm with User Before Download
-      const userConfirmed = window.confirm(`Download ${fileName} (${fileSize})?`);
-      if (!userConfirmed) {
-        toast.info("❌ Download canceled.");
-        setIsDownloading(false);
-        return;
-      }
-
-      // ✅ STEP 3: Start the File Download
+  
+      // ✅ Step 2: Verify Secure Token Before Download
+      const verifyResponse = await axios.get(secureDownloadUrl, {
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      const { downloadUrl, fileName, fileSize } = verifyResponse.data;
+  
+      console.log(`✅ File Verified: ${fileName} (${fileSize})`);
+  
+      // ✅ Step 3: Start Download
       window.open(downloadUrl, "_blank");
-
-      // ✅ Show quota update message for non-admin users
-      if (!isAdmin) {
-        toast.success(
-          `✅ Download started! Remaining Quota: ${remainingQuota.toFixed(2)} GB`,
-          { autoClose: 3000 }
-        );
-      } else {
-        toast.success("✅ Admin download started!", { autoClose: 3000 });
-      }
+  
+      toast.success(`✅ Download started: ${fileName}`, { autoClose: 3000 });
+  
     } catch (error) {
       console.error("🚨 Download Error:", error.response?.data || error.message);
-      toast.error(
-        `⚠️ ${error.response?.data?.message || "Failed to generate download link"}`,
-        { autoClose: 4000 }
-      );
+      toast.error(`⚠️ ${error.response?.data?.message || "Failed to download file"}`, { autoClose: 4000 });
     } finally {
       setIsDownloading(false);
     }
-  };
+  };  
 
   return (
     <button

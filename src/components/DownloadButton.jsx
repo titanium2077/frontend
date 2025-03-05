@@ -9,34 +9,48 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
 
   const handleDownload = async () => {
     if (!fileId) return toast.error("⚠️ Invalid file ID!");
-  
+
     setIsDownloading(true);
-    toast.info("📥 Generating secure download link...", { autoClose: 2000 });
-  
+    toast.info("📥 Generating download link...", { autoClose: 2000 });
+
     try {
-      // ✅ Step 1: Get Secure Download URL
       const response = await axios.get(`${FEED_URL_DOWNLOAD}/${fileId}`, {
         withCredentials: true,
-        headers: { "Content-Type": "application/json" },
       });
-  
-      const { downloadUrl } = response.data;
-      if (!downloadUrl) throw new Error("Download link missing!");
-  
-      console.log("✅ Secure URL Received:", downloadUrl);
-  
-      // ✅ Step 2: Open the Secure URL (Starts Download)
+      const { downloadUrl, remainingQuota } = response.data;
+
+      if (!downloadUrl)
+        throw new Error("Download link not provided by the server.");
+
+      // ✅ Open the secure link (Triggers file download)
       window.open(downloadUrl, "_blank");
-  
-      toast.success(`✅ Download started!`, { autoClose: 3000 });
-  
+
+      // ✅ Show new quota if user (Admins don’t have quotas)
+      if (!isAdmin) {
+        toast.success(
+          `✅ Download started! Remaining Quota: ${remainingQuota.toFixed(
+            2
+          )} GB`,
+          { autoClose: 3000 }
+        );
+      } else {
+        toast.success("✅ Admin download started!", { autoClose: 3000 });
+      }
     } catch (error) {
-      console.error("🚨 Download Error:", error.response?.data || error.message);
-      toast.error(`⚠️ ${error.response?.data?.message || "Failed to download file"}`, { autoClose: 4000 });
+      console.error(
+        "🚨 Download Error:",
+        error.response?.data || error.message
+      );
+      toast.error(
+        `⚠️ ${
+          error.response?.data?.message || "Failed to generate download link"
+        }`,
+        { autoClose: 4000 }
+      );
     } finally {
       setIsDownloading(false);
     }
-  };  
+  };
 
   return (
     <button
@@ -50,7 +64,7 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
           : "bg-blue-500 hover:bg-blue-600 text-white"
       }`}
     >
-      {isDownloading ? "⏳ Downloading..." : "⬇️ Secure Download"}
+      {isDownloading ? "⏳ Downloading..." : "⬇️ Download"}
     </button>
   );
 }

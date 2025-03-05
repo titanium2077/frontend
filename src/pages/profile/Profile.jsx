@@ -16,10 +16,7 @@ export default function Profile() {
       const response = await getUserProfile();
       setProfile(response.data.user);
     } catch (error) {
-      // console.error(
-      //   "🚨 Error fetching profile:",
-      //   error.response?.data || error.message
-      // );
+      
     }
   };
 

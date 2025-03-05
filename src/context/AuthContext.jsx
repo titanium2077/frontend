@@ -19,7 +19,8 @@ export const AuthProvider = ({ children }) => {
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
-        credentials: "include", // ✅ Ensures cookies are sent with request
+        credentials: "include", // ✅ Send cookies with request
+        headers: { "Content-Type": "application/json" }, // ✅ FIXED
       });
 
       if (!response.ok) {
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }) => {
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include", // ✅ Ensures cookies are cleared on logout
+        headers: { "Content-Type": "application/json" }, // ✅ FIXED
       });
 
       setUser(null);

@@ -24,6 +24,7 @@ export const AdminAuthProvider = ({ children }) => {
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include", // ✅ Send cookies with request
+        headers: { "Content-Type": "application/json" }, // ✅ FIXED
       });
 
       if (!response.ok) {
@@ -76,6 +77,7 @@ export const AdminAuthProvider = ({ children }) => {
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include", // ✅ Ensures cookies are cleared on logout
+        headers: { "Content-Type": "application/json" }, // ✅ FIXED
       });
     } catch (error) {
       console.warn("🚨 Logout error:", error.message);

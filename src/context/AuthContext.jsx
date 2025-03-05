@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie"; // ✅ Import js-cookie
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -16,15 +15,12 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      console.log("🔄 Fetching user...");
-      console.log("🔹 Current Cookies:", document.cookie);
+      // console.log("🔄 Fetching user...");
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include", // ✅ Send cookies with request
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" }, // ✅ FIXED
       });
 
       if (!response.ok) {
@@ -32,10 +28,10 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      console.log("✅ User fetched:", data.user);
+      // console.log("✅ User fetched:", data.user);
       setUser(data.user);
     } catch (error) {
-      console.warn("🚨 User authentication failed", error.message);
+      // console.warn("🚨 User authentication failed", error.message);
       setUser(null);
     } finally {
       setLoading(false);
@@ -44,13 +40,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData, navigate) => {
     try {
-      console.log("🔄 Logging in user...");
+      // console.log("🔄 Logging in user...");
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         credentials: "include", // ✅ Send cookies with request
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
 
@@ -60,14 +54,9 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
 
-      // ✅ Store JWT in cookies (with Lax mode for subdomains)
-      Cookies.set("jwt", data.token, {
-        secure: window.location.protocol === "https:", // ✅ Secure only if HTTPS
-        sameSite: "Lax", // ✅ Works across subdomains
-        path: "/", // ✅ Ensures cookie works site-wide
-      });
-
-      console.log("✅ JWT Token Stored:", Cookies.get("jwt"));
+      // console.log(
+      //   "✅ JWT is stored in HttpOnly cookie (Cannot be accessed by frontend)"
+      // );
 
       setUser(data.user);
       toast.success("Login successful! 🎉");
@@ -79,14 +68,14 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async (navigate) => {
     try {
-      console.log("🔄 Logging out...");
+      // console.log("🔄 Logging out...");
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
-        credentials: "include", // ✅ Ensure cookies are cleared on logout
+        credentials: "include", // ✅ Ensures cookies are cleared on logout
+        headers: { "Content-Type": "application/json" }, // ✅ FIXED
       });
 
       setUser(null);
-      Cookies.remove("jwt");
       toast.info("Logged out successfully!");
       navigate("/");
     } catch (error) {

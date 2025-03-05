@@ -14,31 +14,21 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
     toast.info("📥 Generating secure download link...", { autoClose: 2000 });
   
     try {
-      // ✅ Step 1: Generate Secure Token
+      // ✅ Step 1: Get Secure Download URL
       const response = await axios.get(`${FEED_URL_DOWNLOAD}/${fileId}`, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
   
-      const { downloadToken, secureDownloadUrl } = response.data;
+      const { downloadUrl } = response.data;
+      if (!downloadUrl) throw new Error("Download link missing!");
   
-      if (!downloadToken) throw new Error("Download token missing!");
+      console.log("✅ Secure URL Received:", downloadUrl);
   
-      console.log("✅ Secure Token Received:", downloadToken);
-  
-      // ✅ Step 2: Verify Secure Token Before Download
-      const verifyResponse = await axios.get(secureDownloadUrl, {
-        headers: { "Content-Type": "application/json" },
-      });
-  
-      const { downloadUrl, fileName, fileSize } = verifyResponse.data;
-  
-      console.log(`✅ File Verified: ${fileName} (${fileSize})`);
-  
-      // ✅ Step 3: Start Download
+      // ✅ Step 2: Open the Secure URL (Starts Download)
       window.open(downloadUrl, "_blank");
   
-      toast.success(`✅ Download started: ${fileName}`, { autoClose: 3000 });
+      toast.success(`✅ Download started!`, { autoClose: 3000 });
   
     } catch (error) {
       console.error("🚨 Download Error:", error.response?.data || error.message);

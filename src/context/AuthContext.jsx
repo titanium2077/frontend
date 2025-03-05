@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie"; // ✅ Import js-cookie
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,14 +16,10 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async () => {
     try {
       console.log("🔄 Fetching user...");
-      console.log("🔹 Current Cookies:", document.cookie);
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
-        credentials: "include", // ✅ Send cookies with request
-        headers: {
-          "Content-Type": "application/json",
-        },
+        credentials: "include", // ✅ Ensures cookies are sent with request
       });
 
       if (!response.ok) {
@@ -48,9 +43,7 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         credentials: "include", // ✅ Send cookies with request
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
 
@@ -60,14 +53,9 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
 
-      // ✅ Store JWT in cookies (with Lax mode for subdomains)
-      Cookies.set("jwt", data.token, {
-        secure: window.location.protocol === "https:", // ✅ Secure only if HTTPS
-        sameSite: "Lax", // ✅ Works across subdomains
-        path: "/", // ✅ Ensures cookie works site-wide
-      });
-
-      console.log("✅ JWT Token Stored:", Cookies.get("jwt"));
+      console.log(
+        "✅ JWT is stored in HttpOnly cookie (Cannot be accessed by frontend)"
+      );
 
       setUser(data.user);
       toast.success("Login successful! 🎉");
@@ -82,11 +70,10 @@ export const AuthProvider = ({ children }) => {
       console.log("🔄 Logging out...");
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
-        credentials: "include", // ✅ Ensure cookies are cleared on logout
+        credentials: "include", // ✅ Ensures cookies are cleared on logout
       });
 
       setUser(null);
-      Cookies.remove("jwt");
       toast.info("Logged out successfully!");
       navigate("/");
     } catch (error) {

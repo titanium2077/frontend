@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify"; // ✅ Toast notifications
-import "react-toastify/dist/ReactToastify.css"; // ✅ Toast styles
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FEED_URL_DOWNLOAD } from "../config/apiConfig";
 
 export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
@@ -11,12 +11,14 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
     if (!fileId) return toast.error("⚠️ Invalid file ID!");
 
     setIsDownloading(true);
-    toast.info("📥 Generating download link...", { autoClose: 2000 });
+    toast.info("📥 Generating secure download link...", { autoClose: 2000 });
 
     try {
       const response = await axios.get(`${FEED_URL_DOWNLOAD}/${fileId}`, {
         withCredentials: true,
+        headers: { "Content-Type": "application/json" },
       });
+
       const { downloadUrl, remainingQuota } = response.data;
 
       if (!downloadUrl)
@@ -37,10 +39,6 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
         toast.success("✅ Admin download started!", { autoClose: 3000 });
       }
     } catch (error) {
-      // console.error(
-      //   "🚨 Download Error:",
-      //   error.response?.data || error.message
-      // );
       toast.error(
         `⚠️ ${
           error.response?.data?.message || "Failed to generate download link"
@@ -64,7 +62,7 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
           : "bg-blue-500 hover:bg-blue-600 text-white"
       }`}
     >
-      {isDownloading ? "⏳ Downloading..." : "⬇️ Download"}
+      {isDownloading ? "⏳ Downloading..." : "⬇️ Secure Download"}
     </button>
   );
 }

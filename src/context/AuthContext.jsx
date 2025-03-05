@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      console.log("🔄 Fetching user...");
+      // console.log("🔄 Fetching user...");
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
@@ -28,10 +28,10 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      console.log("✅ User fetched:", data.user);
+      // console.log("✅ User fetched:", data.user);
       setUser(data.user);
     } catch (error) {
-      console.warn("🚨 User authentication failed", error.message);
+      // console.warn("🚨 User authentication failed", error.message);
       setUser(null);
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData, navigate) => {
     try {
-      console.log("🔄 Logging in user...");
+      // console.log("🔄 Logging in user...");
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         credentials: "include", // ✅ Send cookies with request
@@ -54,9 +54,9 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
 
-      console.log(
-        "✅ JWT is stored in HttpOnly cookie (Cannot be accessed by frontend)"
-      );
+      // console.log(
+      //   "✅ JWT is stored in HttpOnly cookie (Cannot be accessed by frontend)"
+      // );
 
       setUser(data.user);
       toast.success("Login successful! 🎉");
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async (navigate) => {
     try {
-      console.log("🔄 Logging out...");
+      // console.log("🔄 Logging out...");
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include", // ✅ Ensures cookies are cleared on logout

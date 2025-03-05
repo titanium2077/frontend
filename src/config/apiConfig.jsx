@@ -3,7 +3,7 @@ const IMAGE_URL = import.meta.env.VITE_IMAGE_API_URL;
 export const ADMIN_ACCESS_KEY = import.meta.env.VITE_ADMIN_ACCESS_KEY;
 
 // ✅ Debugging - Check if VITE_API_URL is loading correctly
-console.log("🔹 Debugging VITE_API_URL:", API_URL);
+// console.log("🔹 Debugging VITE_API_URL:", API_URL);
 
 if (!API_URL) {
   throw new Error("❌ API_URL is not defined! Check your .env file.");

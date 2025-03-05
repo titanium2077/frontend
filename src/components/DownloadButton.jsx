@@ -14,39 +14,32 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
     toast.info("📥 Generating download link...", { autoClose: 2000 });
 
     try {
+      // ✅ Step 1: Get the Download URL from the Backend
       const response = await axios.get(`${FEED_URL_DOWNLOAD}/${fileId}`, {
         withCredentials: true,
       });
+
       const { downloadUrl, remainingQuota } = response.data;
+      if (!downloadUrl) throw new Error("Download link not provided by the server.");
 
-      if (!downloadUrl)
-        throw new Error("Download link not provided by the server.");
 
-      // ✅ Open the secure link (Triggers file download)
-      window.open(downloadUrl, "_blank");
+      // ✅ Step 2: Create a Hidden Anchor Tag to Start Download
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", ""); // Backend will set filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      // ✅ Show new quota if user (Admins don’t have quotas)
       if (!isAdmin) {
-        toast.success(
-          `✅ Download started! Remaining Quota: ${remainingQuota.toFixed(
-            2
-          )} GB`,
-          { autoClose: 3000 }
-        );
+        toast.success(`✅ Download started! Remaining Quota: ${remainingQuota.toFixed(2)} GB`, { autoClose: 3000 });
       } else {
         toast.success("✅ Admin download started!", { autoClose: 3000 });
       }
+
     } catch (error) {
-      console.error(
-        "🚨 Download Error:",
-        error.response?.data || error.message
-      );
-      toast.error(
-        `⚠️ ${
-          error.response?.data?.message || "Failed to generate download link"
-        }`,
-        { autoClose: 4000 }
-      );
+      // console.error("🚨 Download Error:", error.response?.data || error.message);
+      toast.error(`⚠️ ${error.response?.data?.message || "Failed to download file"}`, { autoClose: 4000 });
     } finally {
       setIsDownloading(false);
     }

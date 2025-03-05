@@ -28,7 +28,7 @@ export default function Dashboard() {
   
       setStats(response.data);
     } catch (error) {
-      console.error("🚨 Error fetching dashboard stats:", error.response?.data || error);
+      // console.error("🚨 Error fetching dashboard stats:", error.response?.data || error);
     }
   };  
 

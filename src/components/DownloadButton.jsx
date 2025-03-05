@@ -14,35 +14,47 @@ export default function DownloadButton({ fileId, userLimit, isAdmin = false }) {
     toast.info("📥 Generating secure download link...", { autoClose: 2000 });
 
     try {
+      // ✅ STEP 1: Request Secure Download Token
       const response = await axios.get(`${FEED_URL_DOWNLOAD}/${fileId}`, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
 
-      const { downloadUrl, remainingQuota } = response.data;
+      const { downloadToken, secureDownloadUrl, remainingQuota } = response.data;
+      if (!downloadToken) throw new Error("Download token not provided by the server.");
 
-      if (!downloadUrl)
-        throw new Error("Download link not provided by the server.");
+      console.log("✅ Secure Token Received:", downloadToken);
 
-      // ✅ Open the secure link (Triggers file download)
+      // ✅ STEP 2: Verify Secure Token
+      const verifyResponse = await axios.get(secureDownloadUrl);
+      const { fileName, fileSize, downloadUrl } = verifyResponse.data;
+
+      console.log("✅ Token Verified. File:", fileName, "Size:", fileSize);
+
+      // ✅ Confirm with User Before Download
+      const userConfirmed = window.confirm(`Download ${fileName} (${fileSize})?`);
+      if (!userConfirmed) {
+        toast.info("❌ Download canceled.");
+        setIsDownloading(false);
+        return;
+      }
+
+      // ✅ STEP 3: Start the File Download
       window.open(downloadUrl, "_blank");
 
-      // ✅ Show new quota if user (Admins don’t have quotas)
+      // ✅ Show quota update message for non-admin users
       if (!isAdmin) {
         toast.success(
-          `✅ Download started! Remaining Quota: ${remainingQuota.toFixed(
-            2
-          )} GB`,
+          `✅ Download started! Remaining Quota: ${remainingQuota.toFixed(2)} GB`,
           { autoClose: 3000 }
         );
       } else {
         toast.success("✅ Admin download started!", { autoClose: 3000 });
       }
     } catch (error) {
+      console.error("🚨 Download Error:", error.response?.data || error.message);
       toast.error(
-        `⚠️ ${
-          error.response?.data?.message || "Failed to generate download link"
-        }`,
+        `⚠️ ${error.response?.data?.message || "Failed to generate download link"}`,
         { autoClose: 4000 }
       );
     } finally {

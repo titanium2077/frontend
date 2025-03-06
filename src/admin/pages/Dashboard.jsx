@@ -22,7 +22,7 @@ export default function Dashboard() {
         withCredentials: true, 
         headers: {
           "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest", 
+          "X-Requested-With": "XMLHttpRequest",
         },
       });
   
@@ -30,7 +30,7 @@ export default function Dashboard() {
     } catch (error) {
       // console.error("🚨 Error fetching dashboard stats:", error.response?.data || error);
     }
-  };  
+  };    
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-6">

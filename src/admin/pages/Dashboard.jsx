@@ -18,19 +18,24 @@ export default function Dashboard() {
 
   const fetchDashboardStats = async () => {
     try {
+      const jwt = localStorage.getItem("jwt");
+      const deviceToken = localStorage.getItem("deviceToken");
+
       const response = await axios.get(ADMIN_DASHBOARD, {
-        withCredentials: true, 
+        withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwt}`,
+          "X-Device-Token": deviceToken,
           "X-Requested-With": "XMLHttpRequest",
         },
       });
-  
+
       setStats(response.data);
     } catch (error) {
-      // console.error("🚨 Error fetching dashboard stats:", error.response?.data || error);
+      console.warn("🚨 Error fetching dashboard stats:", error);
     }
-  };    
+  };
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-6">

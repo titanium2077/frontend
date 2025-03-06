@@ -19,12 +19,23 @@ export const AdminAuthProvider = ({ children }) => {
 
   const fetchAdmin = async () => {
     try {
-      // console.log("🔄 Fetching admin user...");
+      let jwt = localStorage.getItem("jwt");
+      let deviceToken = localStorage.getItem("deviceToken");
+
+      if (!jwt || !deviceToken) {
+        console.warn("🚨 No JWT or Device Token Found!");
+        setAdmin(null);
+        return;
+      }
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
-        credentials: "include", // ✅ Send cookies with request
-        headers: { "Content-Type": "application/json" }, // ✅ FIXED
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+          "X-Device-Token": deviceToken,
+        },
       });
 
       if (!response.ok) {
@@ -34,7 +45,6 @@ export const AdminAuthProvider = ({ children }) => {
       const data = await response.json();
       setAdmin(data.user);
     } catch (error) {
-      // console.warn("🚨 Admin authentication failed:", error.message);
       logout();
     }
   };
@@ -51,38 +61,33 @@ export const AdminAuthProvider = ({ children }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, deviceToken }),
-        credentials: "include", // ✅ Ensures JWT is stored in cookies
+        credentials: "include",
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      // console.log(
-      //   "✅ JWT is stored in HttpOnly cookie (Cannot be accessed by frontend)"
-      // );
-
+      localStorage.setItem("jwt", data.token);
       setAdmin(data.user);
       navigate("/admin/dashboard");
       toast.success("✅ Login successful!");
       return data;
     } catch (error) {
-      // console.error("🚨 Login Error:", error.message);
       toast.error(error.message);
     }
   };
 
   const logout = async () => {
     try {
-      // console.log("🔄 Logging out...");
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
-        credentials: "include", // ✅ Ensures cookies are cleared on logout
-        headers: { "Content-Type": "application/json" }, // ✅ FIXED
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
       });
-    } catch (error) {
-      // console.warn("🚨 Logout error:", error.message);
-    }
+    } catch (error) {}
 
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("deviceToken");
     setAdmin(null);
     toast.info("🚪 Logged out successfully!");
     navigate("/admin/login");

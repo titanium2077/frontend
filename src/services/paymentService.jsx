@@ -8,7 +8,7 @@ export const createPayment = async (plan) => {
     { plan },
     { withCredentials: true }
   );
-  return response.data; // Contains PayPal Approval URL
+  return response.data;
 };
 
 // ✅ Verify PayPal Payment
@@ -17,5 +17,5 @@ export const verifyPayment = async (paymentId, payerId) => {
     `${PAYMENT_VERIFY}?paymentId=${paymentId}&payerId=${payerId}`,
     { withCredentials: true }
   );
-  return response.data; // Confirmation Message
+  return response.data;
 };

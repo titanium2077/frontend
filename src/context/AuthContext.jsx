@@ -15,12 +15,23 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      // console.log("🔄 Fetching user...");
+      let jwt = localStorage.getItem("jwt");
+      let deviceToken = localStorage.getItem("deviceToken");
+
+      if (!jwt || !deviceToken) {
+        console.warn("🚨 No JWT or Device Token Found!");
+        setUser(null);
+        return;
+      }
 
       const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
-        credentials: "include", // ✅ Send cookies with request
-        headers: { "Content-Type": "application/json" }, // ✅ FIXED
+        credentials: "include", // ✅ Send cookies
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwt}`,
+          "X-Device-Token": deviceToken,
+        },
       });
 
       if (!response.ok) {
@@ -28,10 +39,8 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      // console.log("✅ User fetched:", data.user);
       setUser(data.user);
     } catch (error) {
-      // console.warn("🚨 User authentication failed", error.message);
       setUser(null);
     } finally {
       setLoading(false);
@@ -40,12 +49,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData, navigate) => {
     try {
-      // console.log("🔄 Logging in user...");
+      let deviceToken = localStorage.getItem("deviceToken");
+      if (!deviceToken) {
+        deviceToken = crypto.randomUUID();
+        localStorage.setItem("deviceToken", deviceToken);
+      }
+
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
-        credentials: "include", // ✅ Send cookies with request
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...userData, deviceToken }),
       });
 
       if (!response.ok) {
@@ -53,11 +69,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
-
-      // console.log(
-      //   "✅ JWT is stored in HttpOnly cookie (Cannot be accessed by frontend)"
-      // );
-
+      localStorage.setItem("jwt", data.token); // Store JWT in local storage
       setUser(data.user);
       toast.success("Login successful! 🎉");
       navigate("/");
@@ -68,13 +80,14 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async (navigate) => {
     try {
-      // console.log("🔄 Logging out...");
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
-        credentials: "include", // ✅ Ensures cookies are cleared on logout
-        headers: { "Content-Type": "application/json" }, // ✅ FIXED
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
       });
 
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("deviceToken");
       setUser(null);
       toast.info("Logged out successfully!");
       navigate("/");

@@ -15,118 +15,100 @@ export default function Register() {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-
-    if (!emailRegex.test(e.target.value)) {
-      setEmailError("Invalid email format");
-    } else {
-      setEmailError("");
-    }
+    setEmailError(!emailRegex.test(e.target.value) ? "Invalid email format" : "");
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-
-    if (confirmPassword && e.target.value !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-    } else {
-      setPasswordError("");
-    }
+    setPasswordError(confirmPassword && e.target.value !== confirmPassword ? "Passwords do not match" : "");
   };
 
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
-
-    if (password !== e.target.value) {
-      setPasswordError("Passwords do not match");
-    } else {
-      setPasswordError("");
-    }
+    setPasswordError(password !== e.target.value ? "Passwords do not match" : "");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (emailError || passwordError) return;
-
     await registerUser({ name, email, password });
     navigate("/login");
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-xl">
-        <h1 className="text-3xl font-bold text-center text-gray-800">Create an Account</h1>
-        <p className="text-center text-gray-600">Sign up to get started</p>
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900 p-4">
+      <div className="w-full max-w-md p-8 space-y-6 bg-gray-100 dark:bg-gray-800 shadow-lg rounded-xl">
+        <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
+          Create an Account 🎉
+        </h1>
+        <p className="text-center text-gray-600 dark:text-gray-300">
+          Sign up to get started
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium">Full Name</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">Full Name</label>
             <input
               type="text"
               placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium">Email</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={handleEmailChange}
               className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
-                emailError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-green-500"
-              } text-gray-900`}
+                emailError ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600 focus:ring-green-500"
+              } bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
               required
             />
             {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium">Password</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">Password</label>
             <input
               type="password"
               placeholder="Create a password"
               value={password}
               onChange={handlePasswordChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium">Confirm Password</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
             <input
               type="password"
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
-                passwordError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-green-500"
-              } text-gray-900`}
+                passwordError ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600 focus:ring-green-500"
+              } bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
               required
             />
             {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
           </div>
 
-          <button
-            type="submit"
-            disabled={!!emailError || !!passwordError}
-            className={`w-full text-white font-semibold py-3 rounded-md transition duration-300 ${
-              emailError || passwordError ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-            }`}
-          >
+          <button type="submit" className="w-full text-white font-semibold py-3 rounded-md transition duration-300 bg-green-600 hover:bg-green-700">
             Register
           </button>
         </form>
 
         <div className="text-center">
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Already have an account?{" "}
-            <Link to="/login" className="text-green-600 hover:underline">
+            <Link to="/login" className="text-green-500 hover:underline">
               Login
             </Link>
           </p>

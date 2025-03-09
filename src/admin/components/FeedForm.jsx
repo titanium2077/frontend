@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { IMAGE_URL, FEED_URL, FEED_URL_CREATE } from "../../config/apiConfig";
 
-export default function FeedForm({
-  selectedItem,
-  fetchFeedItems,
-  setIsFormOpen,
-}) {
+export default function FeedForm({ selectedItem, fetchFeedItems, setIsFormOpen }) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -16,7 +12,7 @@ export default function FeedForm({
 
   const [file, setFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  const [previewImageUrl, setPreviewImageUrl] = useState("/placeholder.png"); // Default image
+  const [previewImageUrl, setPreviewImageUrl] = useState("/placeholder.png");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -30,9 +26,7 @@ export default function FeedForm({
       });
 
       setPreviewImageUrl(
-        selectedItem.image
-          ? `${IMAGE_URL}${selectedItem.image}`
-          : "/placeholder.png"
+        selectedItem.image ? `${IMAGE_URL}${selectedItem.image}` : "/placeholder.png"
       );
     }
   }, [selectedItem]);
@@ -44,30 +38,12 @@ export default function FeedForm({
     const selectedFile = e.target.files[0];
 
     if (!selectedFile) {
-      //console.error("🚨 No file selected!");
       alert("Please select a ZIP file before submitting.");
       return;
     }
 
-    //console.log("📂 Selected File:", selectedFile);
-    //console.log("🔍 File Type:", selectedFile.type);
-    //console.log("📝 File Name:", selectedFile.name);
-
-    // ✅ Ensure it is a ZIP file
-    const allowedZipTypes = [
-      "application/zip",
-      "application/x-zip-compressed",
-      "application/octet-stream", // Some browsers use this for ZIP files
-    ];
-
-    if (
-      !allowedZipTypes.includes(selectedFile.type) &&
-      !selectedFile.name.endsWith(".zip")
-    ) {
-      //console.error(
-      //   "🚨 Invalid file type! Expected ZIP, got:",
-      //   selectedFile.type
-      // );
+    const allowedZipTypes = ["application/zip", "application/x-zip-compressed", "application/octet-stream"];
+    if (!allowedZipTypes.includes(selectedFile.type) && !selectedFile.name.endsWith(".zip")) {
       alert("Only ZIP files are allowed!");
       return;
     }
@@ -78,19 +54,17 @@ export default function FeedForm({
   const handleImageChange = (e) => {
     const image = e.target.files[0];
 
-    if (!image.type.startsWith("image/")) {
+    if (!image?.type.startsWith("image/")) {
       setErrorMessage("Only image files are allowed.");
       return;
     }
 
-    setErrorMessage(""); // Clear previous errors
+    setErrorMessage("");
     setPreviewImage(image);
 
-    if (image) {
-      const reader = new FileReader();
-      reader.onload = (event) => setPreviewImageUrl(event.target.result);
-      reader.readAsDataURL(image);
-    }
+    const reader = new FileReader();
+    reader.onload = (event) => setPreviewImageUrl(event.target.result);
+    reader.readAsDataURL(image);
   };
 
   const handleSubmit = async (e) => {
@@ -112,42 +86,29 @@ export default function FeedForm({
         formDataToSend.append(key, value)
       );
 
-      // ✅ Append file ONLY if user selects a new one
-      if (file) {
-        formDataToSend.append("file", file);
-      }
+      if (file) formDataToSend.append("file", file);
+      if (previewImage) formDataToSend.append("image", previewImage);
 
-      // ✅ Append image ONLY if user selects a new one
-      if (previewImage) {
-        formDataToSend.append("image", previewImage);
-      }
-
-      //console.log("📂 FormData to be sent:");
-      for (const [key, value] of formDataToSend.entries()) {
-        //console.log(`${key}:`, value);
-      }
-
-      const apiUrl = selectedItem
-        ? `${FEED_URL}${selectedItem._id}`
-        : `${FEED_URL_CREATE}`;
+      const apiUrl = selectedItem ? `${FEED_URL}/${selectedItem._id}` : FEED_URL_CREATE;
       const method = selectedItem ? "put" : "post";
 
       await axios[method](apiUrl, formDataToSend, {
         withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" }, // ✅ Ensure correct headers
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       fetchFeedItems();
       setIsFormOpen(false);
     } catch (error) {
-      //console.error("🚨 Error saving feed item:", error);
+      console.error("🚨 Error saving feed item:", error);
     }
   };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-gray-900 p-6 rounded-md w-full max-w-lg shadow-lg relative animate-fadeIn">
-        {/* Close Button */}
+        
+        {/* 🔹 Close Button */}
         <button
           className="absolute top-2 right-2 text-white bg-red-500 rounded-full p-2"
           onClick={() => setIsFormOpen(false)}
@@ -155,88 +116,102 @@ export default function FeedForm({
           ✕
         </button>
 
-        {/* Form Title */}
+        {/* 🔹 Form Title */}
         <h2 className="text-xl font-bold text-white mb-4">
           {selectedItem ? "Edit Feed Item" : "Add New Feed Item"}
         </h2>
 
-        {/* Error Message */}
+        {/* 🔹 Error Message */}
         {errorMessage && <p className="text-red-400 mb-2">{errorMessage}</p>}
 
-        {/* Form */}
+        {/* 🔹 Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Title"
-            required
-            className="p-2 w-full rounded bg-gray-700 text-white"
-          />
+          <div>
+            <label className="text-white font-semibold">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Enter title"
+              required
+              className="p-2 w-full rounded bg-gray-700 text-white placeholder-gray-400"
+            />
+          </div>
 
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Description"
-            required
-            className="p-2 w-full rounded bg-gray-700 text-white"
-          ></textarea>
+          <div>
+            <label className="text-white font-semibold">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter description"
+              required
+              className="p-2 w-full rounded bg-gray-700 text-white placeholder-gray-400"
+            />
+          </div>
 
-          <input
-            type="text"
-            name="resolution"
-            value={formData.resolution}
-            onChange={handleChange}
-            placeholder="Resolution (e.g. 1080p)"
-            required
-            className="p-2 w-full rounded bg-gray-700 text-white"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-white font-semibold">Resolution</label>
+              <input
+                type="text"
+                name="resolution"
+                value={formData.resolution}
+                onChange={handleChange}
+                placeholder="1080p, 4K etc."
+                required
+                className="p-2 w-full rounded bg-gray-700 text-white placeholder-gray-400"
+              />
+            </div>
 
-          <input
-            type="text"
-            name="duration"
-            value={formData.duration}
-            onChange={handleChange}
-            placeholder="Duration (e.g. 2m30s)"
-            required
-            className="p-2 w-full rounded bg-gray-700 text-white"
-          />
+            <div>
+              <label className="text-white font-semibold">Duration</label>
+              <input
+                type="text"
+                name="duration"
+                value={formData.duration}
+                onChange={handleChange}
+                placeholder="e.g. 2m30s"
+                required
+                className="p-2 w-full rounded bg-gray-700 text-white placeholder-gray-400"
+              />
+            </div>
+          </div>
 
-          {/* Image Upload */}
-          <label className="text-white">Preview Image:</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="p-2 w-full rounded bg-gray-700 text-white"
-          />
-          <img
-            src={previewImageUrl}
-            alt="Preview"
-            className="w-full h-32 object-cover mt-2 rounded-md"
-          />
+          {/* 🔹 Image Upload */}
+          <div>
+            <label className="text-white font-semibold">Preview Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="p-2 w-full rounded bg-gray-700 text-white"
+            />
+            <img
+              src={previewImageUrl}
+              alt="Preview"
+              className="w-full h-32 object-cover mt-2 rounded-md"
+            />
+          </div>
 
-          {/* ZIP File Upload */}
-          <label className="text-white">Upload ZIP File:</label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="p-2 w-full rounded bg-gray-700 text-white"
-          />
+          {/* 🔹 ZIP File Upload */}
+          <div>
+            <label className="text-white font-semibold">Upload ZIP File</label>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="p-2 w-full rounded bg-gray-700 text-white"
+            />
+          </div>
 
-          {/* Submit Button */}
+          {/* 🔹 Submit Button */}
           <button
             type="submit"
-            className="mt-4 w-full bg-green-500 px-4 py-2 rounded-md text-white"
+            className="mt-4 w-full bg-green-500 px-4 py-2 rounded-md text-white font-semibold"
             disabled={loading}
           >
-            {loading
-              ? "Uploading..."
-              : selectedItem
-              ? "Update Item"
-              : "Add Item"}
+            {loading ? "Uploading..." : selectedItem ? "Update Item" : "Add Item"}
           </button>
         </form>
       </div>

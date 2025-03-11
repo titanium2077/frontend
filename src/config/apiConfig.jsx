@@ -3,8 +3,6 @@ const IMAGE_URL = import.meta.env.VITE_IMAGE_API_URL;
 export const ADMIN_ACCESS_KEY = import.meta.env.VITE_ADMIN_ACCESS_KEY;
 
 // ✅ Debugging - Check if VITE_API_URL is loading correctly
-// console.log("🔹 Debugging VITE_API_URL:", API_URL);
-
 if (!API_URL) {
   throw new Error("❌ API_URL is not defined! Check your .env file.");
 }
@@ -15,7 +13,13 @@ const AUTH_URL_USER_REGISTER = `${AUTH_URL}/register`;
 const AUTH_URL_USER_LOGIN = `${AUTH_URL}/login`;
 const AUTH_URL_ADMIN_LOGIN = `${AUTH_URL}/admin/login`;
 const AUTH_URL_USER_LOGOUT = `${AUTH_URL}/logout`;
-const AUTH_URL_USER_PROFILE = `${AUTH_URL}/me`; // ✅ Fixed: Removed double underscore
+const AUTH_URL_USER_PROFILE = `${AUTH_URL}/me`;
+
+// ✅ Support Endpoints
+const SUPPORT_CHAT_API = `${API_URL}/support`; // ✅ User support messages
+const ADMIN_SUPPORT_API = `${API_URL}/support`; // ✅ Admin fetches all messages
+const ADMIN_SUPPORT_REPLY_API = `${API_URL}/support`; // ✅ Correct reply API (no `/admin`)
+
 
 // ✅ Feed Endpoints
 const FEED_URL = `${API_URL}/feed`;
@@ -43,8 +47,11 @@ export {
   AUTH_URL_USER_LOGIN,
   AUTH_URL_ADMIN_LOGIN,
   AUTH_URL_USER_LOGOUT,
-  AUTH_URL_USER_PROFILE, // ✅ Fixed Export
-  FEED_URL, // ✅ Fixed Export
+  AUTH_URL_USER_PROFILE,
+  SUPPORT_CHAT_API,
+  ADMIN_SUPPORT_API, // ✅ FIXED
+  ADMIN_SUPPORT_REPLY_API,
+  FEED_URL,
   FEED_URL_CREATE,
   FEED_URL_UPDATE,
   FEED_URL_DELETE,

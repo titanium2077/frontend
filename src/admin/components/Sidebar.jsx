@@ -42,6 +42,15 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 📂 Manage Feeds
               </Link>
             </li>
+            <li>
+              <Link
+                to="/admin/support-messages"
+                className="block text-white hover:text-blue-400"
+                onClick={() => setIsOpen(false)}
+              >
+                📨 Support Messages
+              </Link>
+            </li>
             <li className="mt-6">
               <button
                 onClick={logout}

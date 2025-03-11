@@ -3,6 +3,7 @@ import AdminLayout from "../components/AdminLayout";
 import Dashboard from "../pages/Dashboard";
 import ManageFeed from "../pages/ManageFeed";
 import AdminLogin from "../pages/AdminLogin";
+import ManageSupport from "../pages/ManageSupport";
 import ProtectedAdminRoute from "./ProtectedAdminRoute";
 
 export default function AdminRoutes() {
@@ -22,6 +23,7 @@ export default function AdminRoutes() {
       >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="manage-feed" element={<ManageFeed />} />
+        <Route path="support-messages" element={<ManageSupport />} />
       </Route>
     </Routes>
   );

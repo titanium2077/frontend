@@ -3,6 +3,8 @@ import { AuthProvider } from "./context/AuthContext";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ChatSupport from "./components/ChatSupport"; 
 import Home from "./pages/Home";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
@@ -76,6 +78,8 @@ function AppContent() {
         {/* ✅ Admin Routes (No Navbar) */}
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
+      {!isAdminPage && <Footer />}
+      {!isAdminPage && <ChatSupport />}
     </>
   );
 }

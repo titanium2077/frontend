@@ -8,10 +8,25 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  // ✅ Validation Regex
+  const usernameRegex = /^[a-zA-Z0-9@#$]+$/; // ✅ Letters, numbers, @, #, $
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,}$/; // ✅ At least 8 chars, 1 uppercase, 1 number, 1 special char
+
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+    setNameError(
+      e.target.value.includes(" ")
+        ? "Username cannot contain spaces!"
+        : !usernameRegex.test(e.target.value)
+        ? "Username can only have letters, numbers, and @ # $"
+        : ""
+    );
+  };
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -20,7 +35,15 @@ export default function Register() {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    setPasswordError(confirmPassword && e.target.value !== confirmPassword ? "Passwords do not match" : "");
+    setPasswordError(
+      e.target.value.includes(" ")
+        ? "Password cannot contain spaces!"
+        : !passwordRegex.test(e.target.value)
+        ? "Password must be at least 8 chars, 1 uppercase, 1 number, 1 special char (@#$%^&+=!)"
+        : confirmPassword && e.target.value !== confirmPassword
+        ? "Passwords do not match"
+        : ""
+    );
   };
 
   const handleConfirmPasswordChange = (e) => {
@@ -30,7 +53,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (emailError || passwordError) return;
+    if (nameError || emailError || passwordError) return;
     await registerUser({ name, email, password });
     navigate("/login");
   };
@@ -46,20 +69,29 @@ export default function Register() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Username Field */}
           <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-300">Full Name</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">
+              Username (No spaces, only letters, numbers, @#$)
+            </label>
             <input
               type="text"
-              placeholder="Enter your name"
+              placeholder="Username"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              onChange={handleNameChange}
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
+                nameError ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600 focus:ring-green-500"
+              } bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
               required
             />
+            {nameError && <p className="text-red-500 text-sm mt-1">{nameError}</p>}
           </div>
 
+          {/* Email Field */}
           <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">
+              Email (🔔 We recommend using a temporary email for safety)
+            </label>
             <input
               type="email"
               placeholder="Enter your email"
@@ -73,18 +105,24 @@ export default function Register() {
             {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
           </div>
 
+          {/* Password Field */}
           <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-300">Password</label>
+            <label className="block font-medium text-gray-700 dark:text-gray-300">
+              Password (Min 8 chars, 1 uppercase, 1 number, 1 special char)
+            </label>
             <input
               type="password"
               placeholder="Create a password"
               value={password}
               onChange={handlePasswordChange}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
+                passwordError ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600 focus:ring-green-500"
+              } bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
               required
             />
           </div>
 
+          {/* Confirm Password Field */}
           <div>
             <label className="block font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
             <input
@@ -100,7 +138,14 @@ export default function Register() {
             {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
           </div>
 
-          <button type="submit" className="w-full text-white font-semibold py-3 rounded-md transition duration-300 bg-green-600 hover:bg-green-700">
+          {/* Register Button */}
+          <button
+            type="submit"
+            disabled={!!nameError || !!emailError || !!passwordError}
+            className={`w-full text-white font-semibold py-3 rounded-md transition duration-300 ${
+              nameError || emailError || passwordError ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
             Register
           </button>
         </form>

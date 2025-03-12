@@ -35,31 +35,38 @@ export default function ManageFeed() {
         Manage Feed Items
       </h1>
 
-      {/* 🔹 Add New Feed Item */}
-      <button
-        onClick={() => {
-          setSelectedItem(null);
-          setIsFormOpen(true);
-        }}
-        className="mb-4 bg-green-500 px-4 py-2 rounded-md w-full sm:w-auto"
-      >
-        + Add New Feed Item
-      </button>
+      {/* 🔹 Feed Overview & Actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+        <StatCard title="Total Feed Items" value={feedItems.length} />
+        <StatCard title="Pages Available" value={totalPages} />
+        <StatCard title="Current Page" value={currentPage} />
+        <button
+          onClick={() => {
+            setSelectedItem(null);
+            setIsFormOpen(true);
+          }}
+          className="bg-green-500 px-5 py-3 rounded-md w-full sm:w-auto"
+        >
+          + Add New Feed Item
+        </button>
+      </div>
 
-      {/* 🔹 Feed Table */}
-      {loading ? (
-        <p className="text-center text-gray-400">Loading...</p>
-      ) : (
-        <FeedTable
-          feedItems={feedItems}
-          fetchFeedItems={fetchFeedItems}
-          setSelectedItem={setSelectedItem}
-          setIsFormOpen={setIsFormOpen}
-        />
-      )}
+      {/* 🔹 Feed Table (Now scrolls properly on mobile) */}
+      <div className="overflow-x-auto w-full">
+        {loading ? (
+          <p className="text-center text-gray-400">Loading...</p>
+        ) : (
+          <FeedTable
+            feedItems={feedItems}
+            fetchFeedItems={fetchFeedItems}
+            setSelectedItem={setSelectedItem}
+            setIsFormOpen={setIsFormOpen}
+          />
+        )}
+      </div>
 
       {/* 🔹 Pagination Controls */}
-      <div className="flex justify-center gap-4 mt-4">
+      <div className="flex flex-wrap justify-center gap-4 mt-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
@@ -87,6 +94,16 @@ export default function ManageFeed() {
           setIsFormOpen={setIsFormOpen}
         />
       )}
+    </div>
+  );
+}
+
+// 🔹 Stats Card Component
+function StatCard({ title, value }) {
+  return (
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md text-center">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p className="text-3xl font-bold mt-2">{value}</p>
     </div>
   );
 }

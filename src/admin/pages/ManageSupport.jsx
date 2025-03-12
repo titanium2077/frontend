@@ -102,8 +102,8 @@ export default function ManageSupport() {
   };
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex flex-col md:flex-row p-4">
-      {/* ✅ Mobile Toggle Button for User List */}
+    <div className="bg-gray-900 text-white min-h-screen flex flex-col md:flex-row">
+      {/* ✅ User List Sidebar */}
       <UserList
         users={users}
         selectedUser={selectedUser}
@@ -113,8 +113,8 @@ export default function ManageSupport() {
         setShowUserList={setShowUserList}
       />
 
-      {/* ✅ Chat Panel - Full width on mobile */}
-      <div className="w-full md:w-2/3 lg:w-3/4 bg-gray-800 p-4 rounded-lg shadow-lg flex flex-col h-screen md:h-[80vh]">
+      {/* ✅ Chat Panel */}
+      <div className="flex flex-col flex-1 bg-gray-800 rounded-lg shadow-lg h-screen md:h-[85vh]">
         <ChatBox messages={messages} selectedUser={selectedUser} messagesEndRef={messagesEndRef} />
         {selectedUser && (
           <ReplyInput reply={reply} setReply={setReply} handleReply={handleReply} loading={loading} />

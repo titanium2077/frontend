@@ -33,10 +33,10 @@ const ADMIN_URL = `${API_URL}/admin`;
 const ADMIN_DASHBOARD = `${ADMIN_URL}/dashboard`;
 const ADMIN_UPLOAD = `${ADMIN_URL}/upload`;
 
-// ✅ **BTCPay Payment Endpoints**
+// ✅ Payment Endpoints
 const PAYMENT_URL = `${API_URL}/payments`;
-const PAYMENT_CREATE = `${PAYMENT_URL}/crypto-payment`;
-const PAYMENT_VERIFY = `${PAYMENT_URL}/crypto-verify`;
+const PAYMENT_CREATE = `${PAYMENT_URL}/paypal-payment`;
+const PAYMENT_VERIFY = `${PAYMENT_URL}/paypal-verify`;
 
 // ✅ Ensure exports are unique and match imports
 export {

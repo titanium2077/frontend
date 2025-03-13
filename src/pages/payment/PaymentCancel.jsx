@@ -6,7 +6,7 @@ export default function PaymentCancel() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    toast.warning("Payment was canceled ❌");
+    toast.warning("❌ Payment was canceled!");
     navigate("/payment");
   }, [navigate]);
 

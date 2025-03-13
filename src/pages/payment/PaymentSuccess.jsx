@@ -9,24 +9,22 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     const paymentId = searchParams.get("paymentId");
-    const payerId = searchParams.get("PayerID");
 
-    if (paymentId && payerId) {
-      handleVerification(paymentId, payerId);
+    if (paymentId) {
+      handleVerification(paymentId);
     } else {
       toast.error("Invalid Payment Data ❌");
       navigate("/payment");
     }
   }, [searchParams, navigate]);
 
-  const handleVerification = async (paymentId, payerId) => {
+  const handleVerification = async (paymentId) => {
     try {
-      await verifyPayment(paymentId, payerId);
-      toast.success("Payment successful! ✅ Storage increased 🎉");
+      await verifyPayment(paymentId);
+      toast.success("✅ Payment successful! Storage increased 🎉");
       navigate("/profile");
     } catch (error) {
-      //console.error("🚨 Payment Verification Error:", error);
-      toast.error(error.response?.data?.message || "Payment verification failed ❌");
+      toast.error(error.response?.data?.message || "❌ Payment verification failed!");
       navigate("/payment");
     }
   };

@@ -8,10 +8,10 @@ export default function PaymentPage() {
   const handlePayment = async (plan) => {
     setLoading(true);
     try {
-      const { link } = await createPayment(plan);
-      window.location.href = link;
+      const { link } = await createPayment(plan); // ✅ Get BTCPay checkout link
+      window.location.href = link; // ✅ Redirect user to BTCPay checkout
     } catch (error) {
-      toast.error(error.response?.data?.message || "Payment failed!");
+      toast.error(error.response?.data?.message || "Payment failed! ❌");
     } finally {
       setLoading(false);
     }

@@ -1,15 +1,13 @@
 import axios from "axios";
 import { PAYMENT_CREATE, PAYMENT_VERIFY } from "../config/apiConfig";
 
-// ✅ Get JWT from localStorage (Ensure it exists)
+// ✅ Get JWT Token for Authorization
 const getAuthHeaders = () => {
   const token = localStorage.getItem("jwt");
-  return token
-    ? { Authorization: `Bearer ${token}` }
-    : {};
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// ✅ Create PayPal Payment (Now includes JWT)
+// ✅ **Create Crypto Payment (BTC, USDT)**
 export const createPayment = async (plan) => {
   const response = await axios.post(
     PAYMENT_CREATE,
@@ -19,16 +17,16 @@ export const createPayment = async (plan) => {
         "Content-Type": "application/json",
         ...getAuthHeaders(),
       },
-      withCredentials: true, // Ensure cookies are sent for authentication
+      withCredentials: true, // ✅ Ensure JWT authentication
     }
   );
-  return response.data;
+  return response.data; // ✅ Returns the BTCPay checkout link
 };
 
-// ✅ Verify PayPal Payment (Now includes JWT)
-export const verifyPayment = async (paymentId, payerId) => {
+// ✅ **Verify Crypto Payment**
+export const verifyPayment = async (paymentId) => {
   const response = await axios.get(
-    `${PAYMENT_VERIFY}?paymentId=${paymentId}&payerId=${payerId}`,
+    `${PAYMENT_VERIFY}?paymentId=${paymentId}`,
     {
       headers: {
         "Content-Type": "application/json",

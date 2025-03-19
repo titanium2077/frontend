@@ -27,8 +27,9 @@ export default function PaymentPage() {
     try {
       const { link } = await createPayment(selectedPlan, selectedCrypto);
       window.location.href = link; // ✅ Redirect user to BTCPay checkout
+
     } catch (error) {
-      toast.error(error.response?.data?.message || "Payment failed! ❌");
+      toast.error(error.response?.data?.message || "Payment failed!");
     } finally {
       setLoading(false);
       closeModal();

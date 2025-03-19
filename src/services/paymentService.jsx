@@ -7,20 +7,20 @@ const getAuthHeaders = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// ✅ **Create Crypto Payment (BTC, USDT)**
-export const createPayment = async (plan) => {
+// ✅ **Create Crypto Payment (BTC, LTC, DOGE)**
+export const createPayment = async (plan, currency) => {
   const response = await axios.post(
     PAYMENT_CREATE,
-    { plan },
+    { plan, currency }, 
     {
       headers: {
         "Content-Type": "application/json",
         ...getAuthHeaders(),
       },
-      withCredentials: true, // ✅ Ensure JWT authentication
+      withCredentials: true, 
     }
   );
-  return response.data; // ✅ Returns the BTCPay checkout link
+  return response.data;
 };
 
 // ✅ **Verify Crypto Payment**

@@ -9,17 +9,19 @@ const getAuthHeaders = () => {
     : {};
 };
 
-// ✅ Create PayPal Payment (Now includes JWT)
-export const createPayment = async (plan) => {
+
+// ✅ **Create Crypto Payment (BTC, LTC, DOGE)**
+export const createPayment = async (plan, currency) => {
+
   const response = await axios.post(
     PAYMENT_CREATE,
-    { plan },
+    { plan, currency }, 
     {
       headers: {
         "Content-Type": "application/json",
         ...getAuthHeaders(),
       },
-      withCredentials: true, // Ensure cookies are sent for authentication
+      withCredentials: true, 
     }
   );
   return response.data;
